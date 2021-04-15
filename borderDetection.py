@@ -37,6 +37,17 @@ def intersection(list1,list2) :
 def union(list1,list2) :
     return list(set(list1) | set(list2))
 
+def overlapStrings(tp) :
+    overlap = []
+    overlap = inverse_strings(tp[0],db)
+    for ki in tp :
+        inv_str = inverse_strings(ki,db) 
+        overlap = intersection(overlap,inv_str) 
+
+    #print(overlap)
+    return overlap 
+
+
 # Begining of algorithm 
 db = ['jacob','yacob','jaxob','sydny','sydni','sydney']
 n = 2
@@ -82,18 +93,20 @@ for alpha in db :
                 tp = tuple(tup)  # one tuple generated here
                 #print(tp) 
 
+                overlap = overlapStrings(tp) # 2.2.1.2
+                print(overlap)
+
+                '''
                 temp = inverse_strings(tp[0],db)  # 2.2.1.2
-                #IS.append(inv_s)
+
                 for ki in tp : 
                     inv_s = inverse_strings(ki,db)
                     temp = intersection(temp,inv_s)
-                    #print(temp)
 
                 print(str(tp) + ': '+str(temp))
+                '''
+                O = union(O,overlap) 
 
-                O = union(O,temp)
-                #print('Union of')
-                #print(O)
                 '''
 
                 for j in range(1,o+1) : # 2.2.1.1
@@ -104,7 +117,9 @@ for alpha in db :
                 '''
             print('Union of threshold value '+ str(o))
             print(O)
-        print("Center bag changes")
+            print('\n\n')
+
+        #print("Center bag changes")
 
             # 2.2.2 
 
