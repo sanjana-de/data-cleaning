@@ -56,6 +56,14 @@ def count_qgrams(seq) -> dict:
     return hist 
 
 
+def extract_bag(hist,size) :
+    bag = []
+    for key in hist.keys():
+        bag.append(key)
+
+    return bag[:size] 
+
+
 # Begining of algorithm 
 db = ['jacob','yacob','jaxob','sydny','sydni','sydney']
 n = 2
@@ -66,14 +74,14 @@ clustered_strings = []
 clusters = []
 
 #IS = []
-
+cluster = {}
 # Calling the func qgrams on every string in the database here. 
 for alpha in db :
     #print(type(alpha))
     if alpha in clustered_strings :
         continue
     else :
-        B = []
+        #B = []
         B = qgrams(alpha,n)
 
         # max border
@@ -138,23 +146,42 @@ for alpha in db :
                 O_content.append(db[i])
 
             # 2.2.2.1
+            sum_a = 0
             for a in O_content :
                 print(a)
                 # Changing center bag here itsef ( !! Not sure)
                 B = qgrams(a,2)
+                sum_a += len(B) 
                 for k in B :
                     #histogram_dict[k].append(1)
                     # forming a tuple to calculate histogram 
                     hist_list.append(k)
+                    
             #print(hist_list)
             histogram_dict = count_qgrams(hist_list)
-            print(histogram_dict)
+            #print(histogram_dict)
 
             # 2.2.2.2  ( to sort histogram_dict by values )
             sorted_hist = dict(sorted(histogram_dict.items(), key=operator.itemgetter(1),reverse=True))
             print(sorted_hist)
 
             # 2.2.2.3 
+            A = int(sum_a/len(O_content))
+            print(A)
+            #print(O_content)
+
+            # 2.2.2.4
+            B = extract_bag(sorted_hist,A)
+            print(B) 
+
+            # 2.2.3 
+            cluster[o] = B
+
+        # 2.3 
+        print(cluster)
+
+
+
 
 
 
