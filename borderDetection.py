@@ -4,6 +4,7 @@
 '''
 import random
 import operator
+from itertools import groupby
 
 def qgrams(str,n) :
     modstr = '#' + str + '$'
@@ -62,6 +63,49 @@ def extract_bag(hist,size) :
         bag.append(key)
 
     return bag[:size] 
+
+'''
+def longest_sequence(cluster_list) :
+    # freq = max(set(cluster_list), key = cluster_list.count)
+    count_max = 0
+    
+    for i in range(len(cluster_list)-1) :
+        #i=i+1
+        if cluster_list[i] == cluster_list[i+1] :
+            count = 1
+            while cluster_list[i] == cluster_list[i+1] and i<(len(cluster_list)-2):
+                i = i+1
+                count= count+1
+            if i==(len(cluster_list)-2) and cluster_list[i]==cluster_list[i+1]:
+                count = count+1
+                #i = i+1
+            if count>count_max :
+                count_max = count
+                value = cluster_list[i]
+                index = i-(count_max-1)
+        count = 0
+    print(value)
+    print(index)
+
+'''
+
+def maxoccur(cl) :
+    temp = groupby(cl)
+    res = max(temp, key = lambda sub: len(list(sub[1])))
+    #print(res)
+
+    num_times, occurrence = max((len(list(values)), key) for key, values in groupby(cl))
+    print("%d occurred %d times" % (occurrence, num_times))
+
+    for i in cl :
+        if i == occurrence :
+            ind = cl.index(i)
+            t= ind
+            for j in range(num_times) :
+                assert cl[t]==occurrence
+                t=t+1
+
+    print(ind)
 
 
 # Begining of algorithm 
@@ -178,7 +222,17 @@ for alpha in db :
             cluster[o] = B
 
         # 2.3 
+        print("Printing the cluster[]\n")
         print(cluster)
+        # finding the longest sequence ib to ib + delta 
+        cluster_len = []
+        for key in cluster : 
+            cluster_len.append(len(cluster[key]))
+
+        print(cluster_len)  # contains the length of all the elements
+
+        #longest_sequence(cluster_len)
+        maxoccur(cluster_len) # gives the index of the occurence of longest sequence
 
 
 
