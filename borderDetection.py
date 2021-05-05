@@ -64,31 +64,12 @@ def extract_bag(hist,size) :
 
     return bag[:size] 
 
-'''
-def longest_sequence(cluster_list) :
-    # freq = max(set(cluster_list), key = cluster_list.count)
-    count_max = 0
-    
-    for i in range(len(cluster_list)-1) :
-        #i=i+1
-        if cluster_list[i] == cluster_list[i+1] :
-            count = 1
-            while cluster_list[i] == cluster_list[i+1] and i<(len(cluster_list)-2):
-                i = i+1
-                count= count+1
-            if i==(len(cluster_list)-2) and cluster_list[i]==cluster_list[i+1]:
-                count = count+1
-                #i = i+1
-            if count>count_max :
-                count_max = count
-                value = cluster_list[i]
-                index = i-(count_max-1)
-        count = 0
-    print(value)
-    print(index)
 
 '''
+This function counts the longest sequence in the input list 
+and returns the index of the 1st occurence of sub-sequence. 
 
+'''
 def maxoccur(cl) :
     temp = groupby(cl)
     res = max(temp, key = lambda sub: len(list(sub[1])))
@@ -106,10 +87,34 @@ def maxoccur(cl) :
                 t=t+1
 
     print(ind)
+    return ind 
+
+'''
+Function to convert q-grams to string 
+'''
+def qgrams_to_strings(some_list,n) :
+    str = ""
+    for q in some_list :
+        str += q[:n-1]
+        qgram_length = len(q)
+        
+    if(str[0]=='#' and str[len(str)-1]=='$') :
+        str = str[1:-1]
+
+    if(str[0]=='#') :
+        str = str[1:]
+
+    if str[len(str)-1]=='$' :
+        str = str[:-1] 
+
+    #print(str)
+    return str 
+    
 
 
 # Begining of algorithm 
-db = ['jacob','yacob','jaxob','sydny','sydni','sydney']
+# db = ['jacob','yacob','jacob','jacob','jacob','jaxob','sydney','sydney','sydnei','sydnoy','sydney']
+db = ['kolkata','kolkata','kolkata','kolkota','kalkata','kolkata','delhi','delhi','delli','dilli','delhi','delhi'] 
 n = 2
 S = 3
 
@@ -119,6 +124,11 @@ clusters = []
 
 #IS = []
 cluster = {}
+
+#O_content = []
+#histogram_dict = {}
+#hist_list = []
+
 # Calling the func qgrams on every string in the database here. 
 for alpha in db :
     #print(type(alpha))
@@ -153,26 +163,12 @@ for alpha in db :
                 overlap = overlapStrings(tp) # 2.2.1.2
                 print(overlap)
 
-                '''
-                temp = inverse_strings(tp[0],db)  # 2.2.1.2
-
-                for ki in tp : 
-                    inv_s = inverse_strings(ki,db)
-                    temp = intersection(temp,inv_s)
-
-                print(str(tp) + ': '+str(temp))
-                '''
+               
                 O = union(O,overlap) 
 
-                '''
 
-                for j in range(1,o+1) : # 2.2.1.1
-                    #print(random.choice(B))
-                    tup.append(random.choice(B))
-                print(tup)
-             
-                '''
-            print('Union of threshold value '+ str(o))
+            #print('Union of threshold value '+ str(o))
+            print("union of threshold value :")
             print(O)
             print('\n\n')
 
@@ -232,13 +228,64 @@ for alpha in db :
         print(cluster_len)  # contains the length of all the elements
 
         #longest_sequence(cluster_len)
-        maxoccur(cluster_len) # gives the index of the occurence of longest sequence
+        index_ib = maxoccur(cluster_len) # gives the index of the occurence of longest sequence
+
+        # 2.4 update clustered_strings
+        cluster_values = list(cluster.values())
+        cluster_ib_list = cluster_values[index_ib]
+        print(cluster_ib_list)
+
+        #clustered_strings.append(cluster_ib_list)
+        #print(clustered_strings)
+        cluster_ib_str = qgrams_to_strings(cluster_ib_list,2)
+        clustered_strings.append(cluster_ib_str)
+        print("printing clustered strings : ")
+        print(clustered_strings) 
 
 
+        # 2.5 updating clusters
+        clusters.append(cluster_ib_list)
+        #clusters = union(clusters,cluster_ib_list)
+        print(clusters)
+
+        # 2.6 emptying h[k], O, B
+        B = []
+        O = []
+        histogram_dict = {}
+        sorted_hist = {}
+        hist_list = [] 
+        
+# 3 
+# printing the clusters only
+print("Clusters formed are: ")
+print(clusters) 
+
+indexlist = []
+new_clust = []  # to store the clusters in a list
+
+for i in range(len(clusters)) : 
+    ci = clusters[i]
+    clust_i = []    # to store the current formed cluster ci 
+    if i not in indexlist :
+        clust_i.append(ci)
+    
+    for j in range(i+1,len(clusters)) :
+        cj = clusters[j]
+        intersect = intersection(ci,cj)
+
+        if len(intersect)!= 0 and j not in indexlist : 
+            # print(intersection(ci,cj))
+            clust_i.append(cj)
+            indexlist.append(j) 
+
+    #print(clust_i)
+  
+    if len(clust_i) != 0 :
+        new_clust.append(clust_i)
 
 
+print(new_clust)
 
-
-
+# 4 
 
 
