@@ -1,7 +1,10 @@
+# The BorderDetection Algorithm 
+
 '''
     Function to compute qgrams(). 
     It takes a single string as i/p and returns a list with qgrams
 '''
+
 import random
 import operator
 from itertools import groupby
@@ -26,7 +29,7 @@ def inverse_strings(qgr,db) :
     res = []
     Bag = []
     for alpha in db :
-        Bag = qgrams(alpha,2)
+        Bag = qgrams(alpha,n)
         if qgr in Bag :
             res.append(db.index(alpha))
     return res
@@ -53,7 +56,7 @@ def count_qgrams(seq) -> dict:
     hist = {}
     for i in seq :
         hist[i] = hist.get(i,0)+1
-
+    
     return hist 
 
 
@@ -83,7 +86,7 @@ def maxoccur(cl) :
             ind = cl.index(i)
             t= ind
             for j in range(num_times) :
-                assert cl[t]==occurrence
+                #assert cl[t]==occurrence
                 t=t+1
 
     # - print(ind)
@@ -98,14 +101,15 @@ def qgrams_to_strings(some_list,n) :
         str += q[:n-1]
         qgram_length = len(q)
         
-    if(str[0]=='#' and str[len(str)-1]=='$') :
-        str = str[1:-1]
-
+    
     if(str[0]=='#') :
         str = str[1:]
 
     if str[len(str)-1]=='$' :
         str = str[:-1] 
+        
+    if(str[0]=='#' and str[len(str)-1]=='$') :
+        str = str[1:-1]
 
     #print(str)
     return str 
@@ -124,12 +128,20 @@ def rectify_qgrams(baglist) :
             ctr +=1
 
         print(baglist)
+        return baglist
 
 # Begining of algorithm 
-db = ['jacob','yacob','jacob','jacob','jacob','jaxob','sydney','sydney','sydnei','sydnoy','sydney','sydney']
+#db = ['jacob','yacob','jacob','jacob','jacob','jaxob','sydney','sydney','sydnoy','sydney','sydnay','sydney']
 #db = ['kolkata','kolkata','kolkata','kolkota','kalkata','kolkata','delhi','delhi','delli','dilli','delhi','delhi'] 
+
+# copy of database 
+db_copy = []
+for i in db :
+    db_copy.append(i)
+
+
 n = 2
-S = 3
+S = 5
 
 # Initializing
 clustered_strings = []
@@ -296,26 +308,52 @@ for i in range(len(clusters)) :
     if len(clust_i) != 0 :
         new_clust.append(clust_i)
 
+
+
+# Printing the clusters formed 
 for i in new_clust :
     print(i)
 
 
+# Converting the clusters to string and correcting the clusters 
+new_stringClust = []
+new_corrected_clust = []
+print("Correcting the clusters to an extent : ") 
+for i in new_clust :
+    new_stringList = []
+    new_corrected_list = []
+    for j in i :
+        #i[j] = rectify_qgrams(j) 
+        temp = rectify_qgrams(j)
+        new_stringList.append(qgrams_to_strings(temp,n))
+        new_corrected_list.append(temp) 
+    new_stringClust.append(new_stringList)
+    new_corrected_clust.append(new_corrected_list)
+
+# printing modified clusters
+for i in new_stringClust :
+    print(i)
+
+'''
+# printing corrected cluster
+for i in new_corrected_clust :
+    print(i)
+'''
+
 print("Correct spelling for each Cluster : ")
 # 4 
-# Counting frequency of eaach qgram 
+# Counting frequency of each qgram 
 
 freq_dict = {}  # to count the frequency of each qgram 
+correct_str_list = []
 
-
-for c in new_clust : 
+for c in new_corrected_clust : 
     #print(c) 
     new_list = []
     sum_freq = 0
     #qgram_list = []
     for element in c :
-        #print(element)
         #xyz = count_qgrams(element)
-        #print(xyz)
         sum_freq+= len(element)
         for q in element :
             new_list.append(q)
@@ -327,13 +365,41 @@ for c in new_clust :
     # - print(freq_dict)  
     length = int(sum_freq/len(c))
     
-    qgram_list = list(freq_dict.keys())
+    #sorted_hist2 = dict(sorted(freq_dict.items(), key=operator.itemgetter(1),reverse=True))
+    #print(sorted_hist2)
+    
 
+    qgram_list = list(freq_dict.keys())
+    #qgram_list = list(sorted_hist2.keys())
+    #print(qgram_list)
+    
+    # Rectifying the sorted histogram
+    #x = rectify_qgrams(qgram_list)
+    #print(x)
+    
     correct_str = qgrams_to_strings(qgram_list[:length],n)
     print(correct_str)
+    correct_str_list.append(correct_str)
+    
+    
 
+# check length of corrected_Strings and clusters formed 
+assert len(correct_str_list)==len(new_clust)
 
-print("Correcting the clusters to an extent : ") 
-for i in new_clust :
-    for j in i :
-        rectify_qgrams(j) 
+# rectify the db_copy
+
+db_count = 0
+for s in db_copy :
+    #print(s)
+    index_count = 0 
+    for cl in new_stringClust :
+        #print(cl)
+        if s in cl :
+            db_copy.pop(db_count)
+            db_copy.insert(db_count,correct_str_list[index_count]) 
+
+        index_count += 1 
+    db_count += 1  
+
+print("Cleaned List of Database is : ")
+print(db_copy)
